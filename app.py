@@ -36,7 +36,6 @@ class TextEditor(ttk.Frame):
         self.grid(column=0, row=0, sticky="NSEW")
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
-        self.grid_propagate(False)
 
         # Create widgets and bindings.
         self._create_widgets()
@@ -51,22 +50,23 @@ class TextEditor(ttk.Frame):
         self.text_field.configure(highlightthickness=0, font=("courier", 16))
         self.text_field.grid(column=1, row=0, sticky="NSEW")
 
-        #Create the label for line numbers.
-        self.lines = tk.StringVar()
-        self.lines.set("1\n")
-        self.line_numbers = tk.Label(self, padx=5, pady=5, width=4, textvariable=self.lines, anchor="ne")
-        self.line_numbers.configure(font=("courier", 16), background="#eee", foreground="#aaa")
+        # Create the label for line numbers.
+        self.lines = 2
+        self.line_numbers = tk.Text(self, width=5, padx=5, pady=3, highlightthickness=0)
+        self.line_numbers.configure(font=("courier", 16), background="#eee", foreground="#aaa", cursor="")
         self.line_numbers.grid(column=0, row=0, sticky="NSEW")
+        self.line_numbers.insert(tk.END, "    1")
+        self.line_numbers.configure(state="disabled")
 
         # Create horizontal scroll bar.
-        scroll_bar = tk.Scrollbar(self, orient="horizontal", command=self.text_field.xview)
-        scroll_bar.grid(column=1, row=1, sticky='NSEW')
-        self.text_field['xscrollcommand'] = scroll_bar.set
+        self.horizontal_scroll_bar = tk.Scrollbar(self, orient="horizontal", command=self.text_field.xview)
+        self.horizontal_scroll_bar.grid(column=1, row=1, sticky='NSEW')
+        self.text_field['xscrollcommand'] = self.horizontal_scroll_bar.set
 
         # Create vertical scroll bar.
-        scroll_bar = tk.Scrollbar(self, orient="vertical", command=self.text_field.yview)
-        scroll_bar.grid(column=2, row=0, sticky='NSEW')
-        self.text_field['yscrollcommand'] = scroll_bar.set
+        self.vertical_scroll_bar = tk.Scrollbar(self, orient="vertical", command=self.text_field.yview)
+        self.vertical_scroll_bar.grid(column=2, row=0, sticky='NSEW')
+        self.text_field['yscrollcommand'] = self.vertical_scroll_bar.set
 
     def _create_events(self):
         '''
@@ -76,6 +76,9 @@ class TextEditor(ttk.Frame):
         self.text_field.bind("<{>", self._curly_pressed)
         self.text_field.bind("<[>", self._bracket_pressed)
         self.text_field.bind("<(>", self._parenthesis_pressed)
+        self.text_field.bind("<'>", self._single_quote_pressed)
+        self.text_field.bind("<\">", self._double_quote_pressed)
+        self.text_field.bind("<Return>", self._update_line_number)
 
     def _tab_pressed(self, event):
         '''
@@ -110,6 +113,39 @@ class TextEditor(ttk.Frame):
         self.text_field.insert(tk.INSERT, "()")
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
+    
+    def _single_quote_pressed(self, event):
+        '''
+        Method executed when the single quote key is pressed. This method adds another single quote
+        and positions the cursor between the quotes.
+        '''
+        self.text_field.insert(tk.INSERT, "''")
+        self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
+        return "break"
+
+    def _double_quote_pressed(self, event):
+        '''
+        Method executed when the double quote key is pressed. This method adds another double quote
+        and positions the cursor between the quotes.
+        '''
+        self.text_field.insert(tk.INSERT, '""')
+        self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
+        return "break"
+
+    def _update_line_number(self, event):
+        self.line_numbers.configure(state="normal")
+        if (self.lines < 10):
+            self.line_numbers.insert(tk.END, f"    {self.lines}\n")
+        elif (self.lines < 100):
+            self.line_numbers.insert(tk.END, f"   {self.lines}\n")
+        elif (self.lines < 1000):
+            self.line_numbers.insert(tk.END, f"  {self.lines}\n")
+        elif (self.lines < 10000):
+            self.line_numbers.insert(tk.END, f" {self.lines}\n")
+        else: 
+            self.line_numbers.insert(tk.END, f" {self.lines}\n")
+        self.lines += 1
+        self.line_numbers.configure(state="disabled")
 
 if __name__ == "__main__":
     TextEditor.main()
