@@ -7,7 +7,7 @@ Overview: A text editor using tkinter to open/edit/write/save .py files.
 import tkinter as tk
 from tkinter import ttk
 
-class TextEditor(ttk.Frame):
+class TextEditor(tk.Frame):
     '''
     The TextEditor class holds all widgets and functionality of the text editor application.
     '''
@@ -18,8 +18,8 @@ class TextEditor(ttk.Frame):
         '''
         # Create the application's main window.
         root = tk.Tk()
-        root.minsize(width=750, height=500)
-        root.maxsize(width=750, height=500)
+        root.minsize(width=1000, height=612)
+        root.maxsize(width=1000, height=612)
         root.title("ES Code")
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
@@ -37,12 +37,13 @@ class TextEditor(ttk.Frame):
         self.grid(column=0, row=0, sticky="NSEW")
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
+        self.config(background="#c1c5d0")
 
         # Create widgets and bindings.
         self._create_widgets()
         self._create_events()
 
-        # Start tracking line number changes.
+        # Start tracking ln/col number changes.
         self._update_line_numbers()
 
     def _create_widgets(self):
@@ -56,7 +57,6 @@ class TextEditor(ttk.Frame):
                     pady=3,
                     wrap="none",
                     highlightthickness=0,
-                    #font=("courier", 16),
         )
         self.text_field.grid(column=1, row=0, sticky="NSEW")
 
@@ -68,13 +68,26 @@ class TextEditor(ttk.Frame):
                     padx=5,
                     pady=3,
                     highlightthickness=0,
-                    #font=("courier", 16),
-                    background="#eee",
-                    foreground="#aaa",
+                    background="#c1c5d0",
+                    foreground="#64708b",
                     cursor="",
                     state="disabled"
         )
         self.line_numbers.grid(column=0, row=0, sticky="NSEW")
+
+        # Create the current line and column labels.
+        self.cursor_location = tk.StringVar()
+        self.cursor_location.set("Ln 1, Col 1")
+        self.cursor_location_label = tk.Label(
+                    self, 
+                    background="#6cc3b7",
+                    foreground="#fff",
+                    height=1,        
+                    textvariable=self.cursor_location,
+                    anchor="w",
+                    padx=50,      
+        )
+        self.cursor_location_label.grid(column=0, row=2, columnspan=3, sticky="NSEW")
 
         # Create horizontal scroll bar.
         self.horizontal_scroll_bar = tk.Scrollbar(
@@ -180,7 +193,11 @@ class TextEditor(ttk.Frame):
 
 
     def _update_line_numbers(self):
-        # Get ines on screen.
+        '''
+        After being called once, this method will update the line numbers and the
+        ln/col footer every 10ms. 
+        '''
+        # Get lines on screen.
         lines_on_screen = self._get_line_numbers()
 
         # If lines on screen are different from the last update, change which lines are displayed.
@@ -190,6 +207,9 @@ class TextEditor(ttk.Frame):
             self.line_numbers.delete('1.0', 'end')
             self.line_numbers.insert('1.0', lines_on_screen)
             self.line_numbers.config(state='disabled')
+
+        # Update the ln and col number footer. 
+        self.cursor_location.set(f"Ln {self.text_field.index(tk.INSERT).split('.')[0]}, Col {self.text_field.index(tk.INSERT).split('.')[1]}")
 
         # Update the line numbers after every 10 milliseconds.
         self.text_field.after(10, self._update_line_numbers)
