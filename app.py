@@ -2,6 +2,13 @@
 Author: Elijah Sawyers
 Date: 2018
 Overview: A text editor using tkinter to open/edit/write/save .py files.
+
+TODO: 
+    1) Add text highlighting.
+    2) Add file I/O.
+    2) Fix line number resize problem.
+    3) Add event binding for window resize with cmd+ and cmd-.
+    4) Code cleanup.
 '''
 
 import tkinter as tk
@@ -40,13 +47,13 @@ class TextEditor(tk.Frame):
         self.config(background="#c1c5d0")
 
         # Create widgets and bindings.
-        self._create_widgets()
-        self._create_events()
+        self.create_widgets()
+        self.create_events()
 
         # Start tracking ln/col number changes.
-        self._update_line_numbers()
+        self.update_line_numbers()
 
-    def _create_widgets(self):
+    def create_widgets(self):
         '''
         This method initializes all widgets, and adds them to the screen using the grid geometry manager.
         '''
@@ -107,18 +114,18 @@ class TextEditor(tk.Frame):
         self.vertical_scroll_bar.grid(column=2, row=0, sticky='NSEW')
         self.text_field['yscrollcommand'] = self.vertical_scroll_bar.set
 
-    def _create_events(self):
+    def create_events(self):
         '''
         This method binds event listeners to widgets and key presses.
         '''
-        self.text_field.bind("<Tab>", self._tab_pressed)
-        self.text_field.bind("<{>", self._curly_pressed)
-        self.text_field.bind("<[>", self._bracket_pressed)
-        self.text_field.bind("<(>", self._parenthesis_pressed)
-        self.text_field.bind("<'>", self._single_quote_pressed)
-        self.text_field.bind("<\">", self._double_quote_pressed)
+        self.text_field.bind("<Tab>", self.tab_pressed)
+        self.text_field.bind("<{>", self.curly_pressed)
+        self.text_field.bind("<[>", self.bracket_pressed)
+        self.text_field.bind("<(>", self.parenthesis_pressed)
+        self.text_field.bind("<'>", self.single_quote_pressed)
+        self.text_field.bind("<\">", self.double_quote_pressed)
 
-    def _tab_pressed(self, event):
+    def tab_pressed(self, event):
         '''
         This method is executed when the tab key is press.
         Inserts four spaces rather than a tab character.
@@ -126,7 +133,7 @@ class TextEditor(tk.Frame):
         self.text_field.insert(tk.INSERT, " " * 4)
         return "break"
 
-    def _curly_pressed(self, event):
+    def curly_pressed(self, event):
         '''
         This method is executed when the left-curlybrace key is pressed. This method autocompletes
         the right curly brace and positions the cursor between the braces.
@@ -135,7 +142,7 @@ class TextEditor(tk.Frame):
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
 
-    def _bracket_pressed(self, event):
+    def bracket_pressed(self, event):
         '''
         This method is executed when the left-bracket key is pressed. This method
         autocompletes the right bracket and positions the cursor between the brackets.
@@ -144,7 +151,7 @@ class TextEditor(tk.Frame):
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
 
-    def _parenthesis_pressed(self, event):
+    def parenthesis_pressed(self, event):
         '''
         This method is executed when the left-parenthesis key is pressed. This method
         autocompletes the right parenthesis and positions the cursor between the parenthesis.
@@ -153,7 +160,7 @@ class TextEditor(tk.Frame):
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
 
-    def _single_quote_pressed(self, event):
+    def single_quote_pressed(self, event):
         '''
         This method is executed when the single quote key is pressed. This method adds
         another single quote and positions the cursor between the quotes.
@@ -162,7 +169,7 @@ class TextEditor(tk.Frame):
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
 
-    def _double_quote_pressed(self, event):
+    def double_quote_pressed(self, event):
         '''
         This method is executed when the double quote key is pressed. This method adds
         another double quote and positions the cursor between the quotes.
@@ -171,7 +178,7 @@ class TextEditor(tk.Frame):
         self.text_field.mark_set(tk.INSERT, f"{self.text_field.index(tk.INSERT).split('.')[0]}.{int(self.text_field.index(tk.INSERT).split('.')[1]) - 1}")
         return "break"
 
-    def _get_line_numbers(self):
+    def get_line_numbers(self):
         '''
         This method determines which line numbers are currently on the screen.
 
@@ -192,13 +199,13 @@ class TextEditor(tk.Frame):
         return lines_on_screen
 
 
-    def _update_line_numbers(self):
+    def update_line_numbers(self):
         '''
         After being called once, this method will update the line numbers and the
         ln/col footer every 10ms. 
         '''
         # Get lines on screen.
-        lines_on_screen = self._get_line_numbers()
+        lines_on_screen = self.get_line_numbers()
 
         # If lines on screen are different from the last update, change which lines are displayed.
         if self.lines != lines_on_screen:
@@ -212,7 +219,7 @@ class TextEditor(tk.Frame):
         self.cursor_location.set(f"Ln {self.text_field.index(tk.INSERT).split('.')[0]}, Col {self.text_field.index(tk.INSERT).split('.')[1]}")
 
         # Update the line numbers after every 10 milliseconds.
-        self.text_field.after(10, self._update_line_numbers)
+        self.text_field.after(10, self.update_line_numbers)
 
 if __name__ == "__main__":
     TextEditor.main()
