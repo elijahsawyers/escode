@@ -13,6 +13,9 @@ TODO:
 
 import tkinter as tk
 from tkinter import ttk
+import pygments
+from pygments.lexers import PythonLexer
+
 
 class TextEditor(tk.Frame):
     '''
@@ -52,6 +55,9 @@ class TextEditor(tk.Frame):
 
         # Start tracking ln/col number changes.
         self.update_line_numbers()
+
+        # Configure text highlighting
+        self.configure_highlighting()
 
     def create_widgets(self):
         '''
@@ -220,6 +226,35 @@ class TextEditor(tk.Frame):
 
         # Update the line numbers after every 10 milliseconds.
         self.text_field.after(10, self.update_line_numbers)
+
+    def configure_highlighting(self):
+        self.text_field.tag_configure("Token.Keyword", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Constant", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Declaration", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Namespace", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Pseudo", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Reserved", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Keyword.Type", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Name.Class", foreground="#003D99")
+        self.text_field.tag_configure("Token.Name.Exception", foreground="#003D99")
+        self.text_field.tag_configure("Token.Name.Function", foreground="#003D99")
+        self.text_field.tag_configure("Token.Operator.Word", foreground="#CC7A00")
+        self.text_field.tag_configure("Token.Comment", foreground="#B80000")
+        self.text_field.tag_configure("Token.Literal.String", foreground="#248F24")
+        
+        self.highlight_syntax()
+
+    def highlight_syntax(self):
+        self.text_field.mark_set("range_start", "1.0")
+        data = self.text_field.get("1.0", "end-1c")
+
+        for token, content in pygments.lex(data, PythonLexer()):
+            self.text_field.mark_set("range_end", f"range_start + {len(content)}c")
+            self.text_field.tag_add(str(token), "range_start", "range_end")
+
+        self.text_field.mark_set("range_start", "range_end")
+        self.text_field.after(10, self.highlight_syntax)
+
 
 if __name__ == "__main__":
     TextEditor.main()
