@@ -228,20 +228,16 @@ class TextEditor(tk.Frame):
         self.text_field.after(10, self.update_line_numbers)
 
     def configure_highlighting(self):
-        self.text_field.tag_configure("Token.Keyword", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Constant", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Declaration", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Namespace", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Pseudo", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Reserved", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Keyword.Type", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Name.Class", foreground="#003D99")
-        self.text_field.tag_configure("Token.Name.Exception", foreground="#003D99")
-        self.text_field.tag_configure("Token.Name.Function", foreground="#003D99")
-        self.text_field.tag_configure("Token.Operator.Word", foreground="#CC7A00")
-        self.text_field.tag_configure("Token.Comment", foreground="#B80000")
-        self.text_field.tag_configure("Token.Literal.String", foreground="#248F24")
-        
+        self.text_field.tag_configure("Token.Keyword", foreground="#0000ff")
+        self.text_field.tag_configure("Token.Name.Builtin.Pseudo", foreground="#0000ff")
+        self.text_field.tag_configure("Token.Literal.Number.Integer", foreground="#008000")
+        self.text_field.tag_configure("Token.Literal.Number.Float", foreground="#008000")
+        self.text_field.tag_configure("Token.Literal.String.Single", foreground="#b77600")
+        self.text_field.tag_configure("Token.Literal.String.Double", foreground="#b77600")
+        self.text_field.tag_configure("Token.Literal.String.Doc", foreground="#b77600")
+        self.text_field.tag_configure("Token.Comment.Single", foreground="#008000")
+        self.text_field.tag_configure("Token.Comment.Hashbang", foreground="#008000")
+
         self.highlight_syntax()
 
     def highlight_syntax(self):
@@ -249,10 +245,11 @@ class TextEditor(tk.Frame):
         data = self.text_field.get("1.0", "end-1c")
 
         for token, content in pygments.lex(data, PythonLexer()):
+            print(token, content)
             self.text_field.mark_set("range_end", f"range_start + {len(content)}c")
             self.text_field.tag_add(str(token), "range_start", "range_end")
+            self.text_field.mark_set("range_start", "range_end")
 
-        self.text_field.mark_set("range_start", "range_end")
         self.text_field.after(10, self.highlight_syntax)
 
 
