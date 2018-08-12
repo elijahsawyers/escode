@@ -4,11 +4,12 @@ Date: 2018
 Overview: A text editor using tkinter to open/edit/write/save .py files.
 
 TODO: 
-    1) Add text highlighting.
-    2) Add file I/O.
-    2) Fix line number resize problem.
-    3) Add event binding for window resize with cmd+ and cmd-.
-    4) Code cleanup.
+    1) Add file I/O and menu bar.
+    2) Increase performance of text highlighting.
+    3) Fix line number resize problem.
+    4) Add event binding for window resize with cmd+ and cmd-.
+    5) Add dark theme.
+    6) Code cleanup.
 '''
 
 import tkinter as tk
@@ -33,6 +34,20 @@ class TextEditor(tk.Frame):
         root.title("ES Code")
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
+        root.option_add('*tearOff', "FALSE")
+
+        # Create the menu bar
+        menubar = tk.Menu(root)
+        root['menu'] = menubar
+
+        menu_file = tk.Menu(menubar)
+        menu_edit = tk.Menu(menubar)
+        menubar.add_cascade(menu=menu_file, label='File')
+        menubar.add_cascade(menu=menu_edit, label='Edit')
+
+        menu_file.add_command(label='New')
+        menu_file.add_command(label='Open...')
+        menu_file.add_command(label='Close')
 
         # Create the application's widgets, and start the event loop.
         cls(root)
@@ -228,6 +243,9 @@ class TextEditor(tk.Frame):
         self.text_field.after(10, self.update_line_numbers)
 
     def configure_highlighting(self):
+        '''
+        This method configures which tokens get highlighted.
+        '''
         self.text_field.tag_configure("Token.Keyword", foreground="#0000ff")
         self.text_field.tag_configure("Token.Name.Builtin.Pseudo", foreground="#0000ff")
         self.text_field.tag_configure("Token.Literal.Number.Integer", foreground="#008000")
@@ -241,11 +259,13 @@ class TextEditor(tk.Frame):
         self.highlight_syntax()
 
     def highlight_syntax(self):
+        '''
+        This method highlights the text.
+        '''
         self.text_field.mark_set("range_start", "1.0")
         data = self.text_field.get("1.0", "end-1c")
 
         for token, content in pygments.lex(data, PythonLexer()):
-            print(token, content)
             self.text_field.mark_set("range_end", f"range_start + {len(content)}c")
             self.text_field.tag_add(str(token), "range_start", "range_end")
             self.text_field.mark_set("range_start", "range_end")
