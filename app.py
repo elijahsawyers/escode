@@ -30,7 +30,7 @@ class TextEditor(tk.Frame):
         root = tk.Tk()
         root.minsize(width=1000, height=612)
         root.maxsize(width=1000, height=612)
-        root.title("ES Code")
+        root.title("escode")
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
 
