@@ -41,6 +41,9 @@ class TextBox(tk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
+        # Event handlers.
+        self.text.bind("<Tab>", self._tab)
+
         # Create a proxy for the underlying Tk widget to generate a <<Change>> event.
         self.text._orig = self.text._w + '_orig'
         self.text.tk.call('rename', self.text._w, self.text._orig)
@@ -62,6 +65,12 @@ class TextBox(tk.Frame):
 
         # Return what the actual widget returned.
         return result
+
+    def _tab(self, *args):
+        '''TODO'''
+
+        self.text.insert(tk.INSERT, ' ' * 4)
+        return 'break'
 
     def highlight_text(self):
         '''TODO'''
