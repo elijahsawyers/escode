@@ -4,6 +4,7 @@ Date: 11/11/2019
 '''
 
 import tkinter as tk
+from idlelib.redirector import WidgetRedirector
 
 from .footer import Footer
 from .text_box import TextBox
@@ -39,3 +40,9 @@ class TextEditor(tk.Frame):
 
         self.line_numbers.redraw()
         self.text_box.highlight_text()
+
+        cursor_position = self.text_box.text.index(tk.INSERT)
+        self.footer.update_ln_col_number(
+            cursor_position.split('.')[0],
+            cursor_position.split('.')[1]
+        )

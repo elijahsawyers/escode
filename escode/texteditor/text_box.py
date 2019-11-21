@@ -54,7 +54,10 @@ class TextBox(tk.Frame):
 
         # Let the actual widget perform the requested action.
         cmd = (self.text._orig,) + args
-        result = self.text.tk.call(cmd)
+        try:
+            result = self.tk.call(cmd)
+        except Exception:
+            return None
 
         # Generate a <<Change>> event on-add, on-delete, or on-scroll.
         if (args[0] in ('insert', 'replace', 'delete') or
