@@ -78,29 +78,31 @@ class TextBox(tk.Frame):
     def highlight_text(self):
         '''TODO'''
 
-        start_index = self.text.index('@0,0')
-        end_index = self.text.index('@0,0')
+        pass
 
-        while True:
-            dline = self.text.dlineinfo(end_index)
-            if dline is None: break
-            end_index = self.text.index(f'{end_index}+1line')
+        # start_index = self.text.index('@0,0')
+        # end_index = self.text.index('@0,0')
 
-        for tag in self.text.tag_names():
-            self.text.tag_remove(tag, self.text.index('@0,0'), end_index)
+        # while True:
+        #     dline = self.text.dlineinfo(end_index)
+        #     if dline is None: break
+        #     end_index = self.text.index(f'{end_index}+1line')
 
-        code = self.text.get(start_index, end_index)
+        # for tag in self.text.tag_names():
+        #     self.text.tag_remove(tag, self.text.index('@0,0'), end_index)
 
-        for index, line in enumerate(code):
-            if index == 0 and line != '\n':
-                break
-            elif line == '\n':
-                start_index = self.text.index(f'{start_index}+1line')
-            else:
-                break
+        # code = self.text.get(start_index, end_index)
 
-        self.text.mark_set('range_start', start_index)
-        for token, content in pygments.lex(code, PythonLexer()):
-            self.text.mark_set('range_end', f'range_start + {len(content)}c')
-            self.text.tag_add(str(token), 'range_start', 'range_end')
-            self.text.mark_set('range_start', 'range_end')
+        # for index, line in enumerate(code):
+        #     if index == 0 and line != '\n':
+        #         break
+        #     elif line == '\n':
+        #         start_index = self.text.index(f'{start_index}+1line')
+        #     else:
+        #         break
+
+        # self.text.mark_set('range_start', start_index)
+        # for token, content in pygments.lex(code, PythonLexer()):
+        #     self.text.mark_set('range_end', f'range_start + {len(content)}c')
+        #     self.text.tag_add(str(token), 'range_start', 'range_end')
+        #     self.text.mark_set('range_start', 'range_end')

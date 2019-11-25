@@ -14,5 +14,6 @@ if __name__ == '__main__':
     root.title('escode')
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
-    te = TextEditor().grid(column=0, row=0, sticky='NSEW')
+    root.option_add('*tearOff', tk.FALSE)
+    text_editor = TextEditor(root).grid(column=0, row=0, sticky='NSEW')
     root.mainloop()
