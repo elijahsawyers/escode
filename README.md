@@ -1,8 +1,7 @@
 # escode
-> A text editor application written in Python. escode...get it? Pretty funny, huh? 
+> A text editor application. escode...get it? Pretty funny, huh? 
 
 # Built With
-* [Python](https://www.python.org/)
 * [Tkinter](https://wiki.python.org/moin/TkInter)
 * [Pygments](http://pygments.org/)
 
