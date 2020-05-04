@@ -43,6 +43,8 @@ class TextBox(tk.Frame):
 
         # Event handlers.
         self.text.bind("<Tab>", self._tab)
+        self.text.bind('<Key>', self.highlight_text)
+        self.text.bind_all('<<Paste>>', self.highlight_text)
 
         # Create a proxy for the underlying Tk widget to generate a <<Change>> event.
         self.text._orig = self.text._w + '_orig'
@@ -75,34 +77,27 @@ class TextBox(tk.Frame):
         self.text.insert(tk.INSERT, ' ' * 4)
         return 'break'
 
-    def highlight_text(self):
+    def highlight_text(self, event):
         '''TODO'''
 
-        pass
+        start_index = self.text.index('@0,0')
+        end_index = self.text.index(tk.END)
 
-        # start_index = self.text.index('@0,0')
-        # end_index = self.text.index('@0,0')
+        for tag in self.text.tag_names():
+            self.text.tag_remove(tag, self.text.index('@0,0'), end_index)
 
-        # while True:
-        #     dline = self.text.dlineinfo(end_index)
-        #     if dline is None: break
-        #     end_index = self.text.index(f'{end_index}+1line')
+        code = self.text.get(start_index, end_index)
 
-        # for tag in self.text.tag_names():
-        #     self.text.tag_remove(tag, self.text.index('@0,0'), end_index)
+        for index, line in enumerate(code):
+            if index == 0 and line != '\n':
+                break
+            elif line == '\n':
+                start_index = self.text.index(f'{start_index}+1line')
+            else:
+                break
 
-        # code = self.text.get(start_index, end_index)
-
-        # for index, line in enumerate(code):
-        #     if index == 0 and line != '\n':
-        #         break
-        #     elif line == '\n':
-        #         start_index = self.text.index(f'{start_index}+1line')
-        #     else:
-        #         break
-
-        # self.text.mark_set('range_start', start_index)
-        # for token, content in pygments.lex(code, PythonLexer()):
-        #     self.text.mark_set('range_end', f'range_start + {len(content)}c')
-        #     self.text.tag_add(str(token), 'range_start', 'range_end')
-        #     self.text.mark_set('range_start', 'range_end')
+        self.text.mark_set('range_start', start_index)
+        for token, content in pygments.lex(code, PythonLexer()):
+            self.text.mark_set('range_end', f'range_start + {len(content)}c')
+            self.text.tag_add(str(token), 'range_start', 'range_end')
+            self.text.mark_set('range_start', 'range_end')

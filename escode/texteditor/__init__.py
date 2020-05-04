@@ -51,7 +51,6 @@ class TextEditor(tk.Frame):
         '''TODO'''
 
         self.line_numbers.redraw()
-        self.text_box.highlight_text()
 
         cursor_position = self.text_box.text.index(tk.INSERT)
         self.footer.update_ln_col_number(
