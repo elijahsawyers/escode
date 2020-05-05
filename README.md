@@ -1,5 +1,5 @@
 # escode
-> The barebones text editor! 
+> The barebones python text editor! 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/elijahsawyers/escode/master/Demo.png" />
