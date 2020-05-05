@@ -6,10 +6,10 @@ Date: 11/11/2019
 import tkinter as tk
 
 class TextLineNumbers(tk.Canvas):
-    '''TODO'''
+    '''Line numbers widget.'''
 
     def __init__(self, *args, **kwargs):
-        '''Initializes '''
+        '''Initializes line numbers widget.'''
 
         super().__init__(*args, **kwargs)
 

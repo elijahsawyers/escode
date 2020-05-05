@@ -6,10 +6,10 @@ Date: 11/11/2019
 import tkinter as tk
 
 class Footer(tk.Label):
-    '''TODO'''
+    '''A footer widget.'''
 
     def __init__(self, *args, **kwargs):
-        '''TODO'''
+        '''Initialize the footer widget.'''
 
         super().__init__(*args, **kwargs)
         
@@ -25,7 +25,7 @@ class Footer(tk.Label):
         )
 
     def update_ln_col_number(self, ln, col):
-        '''TODO'''
+        '''Update the line and column number of the footer.'''
 
         self.ln_col_number.set(f'Ln {ln}, Col {col}')
 

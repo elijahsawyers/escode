@@ -8,10 +8,10 @@ import tkinter as tk
 from pygments.lexers import PythonLexer
 
 class TextBox(tk.Frame):
-    '''TODO'''
+    '''A text box widget.'''
 
     def __init__(self, *args, **kwargs):
-        '''TODO'''
+        '''Initialize the text box widget.'''
 
         super().__init__(*args, **kwargs)
 
@@ -43,8 +43,6 @@ class TextBox(tk.Frame):
 
         # Event handlers.
         self.text.bind("<Tab>", self._tab)
-        self.text.bind('<Key>', self.highlight_text)
-        self.text.bind_all('<<Paste>>', self.highlight_text)
 
         # Create a proxy for the underlying Tk widget to generate a <<Change>> event.
         self.text._orig = self.text._w + '_orig'
@@ -52,7 +50,7 @@ class TextBox(tk.Frame):
         self.text.tk.createcommand(self.text._w, self._proxy)
 
     def _proxy(self, *args):
-        '''TODO'''
+        '''Event proxy.'''
 
         # Let the actual widget perform the requested action.
         cmd = (self.text._orig,) + args
@@ -63,22 +61,32 @@ class TextBox(tk.Frame):
 
         # Generate a <<Change>> event on-add, on-delete, or on-scroll.
         if (args[0] in ('insert', 'replace', 'delete') or
-            args[0:2] == ('xview', 'scroll') or
-            args[0:2] == ('yview', 'scroll')
+            args[0:2] == ('xview', 'scoll') or
+            args[0:2] == ('yview', 'scroll') or
+            args[0:2] == ('xview', 'moveto') or
+            args[0:2] == ('yview', 'moveto')
         ):
+
+            # Highlight text on insert and delete.
+            if (
+                args[0:2] == ('insert', 'insert') or
+                args[0] == 'delete'
+            ):
+                self._highlight_text()
+
             self.event_generate('<<Change>>', when='tail')
 
         # Return what the actual widget returned.
         return result
 
     def _tab(self, *args):
-        '''TODO'''
+        '''Insert four spaces on tab press.'''
 
         self.text.insert(tk.INSERT, ' ' * 4)
         return 'break'
 
-    def highlight_text(self, event):
-        '''TODO'''
+    def _highlight_text(self):
+        '''Highlight the text in the text box.'''
 
         start_index = self.text.index('@0,0')
         end_index = self.text.index(tk.END)

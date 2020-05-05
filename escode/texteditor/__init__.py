@@ -12,10 +12,10 @@ from .text_box import TextBox
 from .text_line_numbers import TextLineNumbers
 
 class TextEditor(tk.Frame):
-    '''TODO'''
+    '''A text editor widget.'''
 
     def __init__(self, *args, **kwargs):
-        '''TODO'''
+        '''Initialize the text editor widget.'''
 
         super().__init__(*args, **kwargs)
 
@@ -48,7 +48,7 @@ class TextEditor(tk.Frame):
         args[0].config(menu=self.menubar)
 
     def _on_change(self, event):
-        '''TODO'''
+        '''Handle change events and update the line numbers.'''
 
         self.line_numbers.redraw()
 
@@ -59,12 +59,12 @@ class TextEditor(tk.Frame):
         )
 
     def _new(self):
-        '''TODO'''
+        '''Create a new file.'''
         
         self.text_box.text.delete('0.0', tk.END)
 
     def _open(self):
-        '''TODO'''
+        '''Open a file.'''
         
         self.filename = tk.filedialog.askopenfilename(initialdir = '~/')
 
@@ -73,7 +73,7 @@ class TextEditor(tk.Frame):
             self.text_box.text.insert('0.0', file.read())
 
     def _save(self):
-        '''TODO'''
+        '''Save the current file.'''
 
         if not self.filename:
             self.filename = tk.filedialog.asksaveasfilename(initialdir = '~/')
